@@ -3,7 +3,7 @@ from gpiozero.pins.pigpio import PiGPIOFactory
 import numpy as np
 from waiting import wait
 import time
-from exceptions import NoGlassError
+from bartending.custom_exceptions import NoGlassError
 
 class DrinkMaker:
     def __init__(self):
