@@ -36,7 +36,6 @@ def main():
 					
 				if trigger == True:
 					words = set(text.split())
-					print(words)
 					if words.issuperset({"forget", "it", "bartender"}):
 						trigger = False
 					else:				
