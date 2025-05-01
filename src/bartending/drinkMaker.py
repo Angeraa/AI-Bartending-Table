@@ -22,6 +22,8 @@ class DrinkMaker:
 
         self.setup_pumps()
         self.setup_servos()
+        self.up_lift()
+        self.greenLED.blink(1, 1, 3, False)
 
     def setup_pumps(self):
         for pin in self.pin_numbers:
@@ -32,18 +34,30 @@ class DrinkMaker:
         self.servo2 = AngularServo(15, min_pulse_width=0.0008, pin_factory=self.factory)
         self.servo1.angle = -90
         self.servo2.angle = 60
+        
+    def up_lift(self):
+        if not self.button.is_pressed:
+            self.direction.off()	
+            self.stepper.blink(0.00015, 0.00015)
+            self.button.wait_for_press()
+            self.stepper.off()
+        self.direction.on()
 
     def get_cpu_temperature(self):
         return self.cpu.temperature
 
     def close(self):
         self.lightsen.close()
+        
+    def offAllPumps(self):
+        for pump in self.pumps:
+            pump.off()
 
     def pump_drink(self, pump_number, pump_volume, is_wine=False): #takes in a list of pumps and volume, and the size of the glass
         dt = 0
         pump_time = []
         
-        print("making a drink")
+        print("Making a drink")
         
         #servo retracts
         self.servo1.angle = -90
@@ -122,12 +136,13 @@ class DrinkMaker:
         last_time = time.time()
         while True:
             dt += time.time() - last_time
-            print(dt)
             last_time = time.time()
-            for times in pump_time:
-                if dt > times:
-                    self.pumps[pump_number[pump_time.index(times)]].off()
+            for i in range(len(pump_time)):
+                if dt > pump_time[i]:
+                    self.pumps[pump_number[i]].off()
+                    print(f"Pump {pump_number[i]} is off")
             if not self.pumps[pump_number[pump_time.index(max(pump_time))]].is_lit:
+                self.offAllPumps()
                 break
             time.sleep(0.3)
         
@@ -140,8 +155,4 @@ class DrinkMaker:
         time.sleep(0.5)
         
         #platform goes back up
-        self.direction.off()	
-        self.stepper.blink(0.00015, 0.00015)
-        self.button.wait_for_press()
-        self.stepper.off()
-        self.direction.on()
+        self.up_lift()
