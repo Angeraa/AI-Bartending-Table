@@ -1,4 +1,4 @@
-# AI-Bartending-Table
+# Voice-Activated-Bartending-Table
 This piece of furniture looks like a regular table, but underneath is a hidden secret. Powered by a raspberry pi 4, this table uses a series of pumps and servos to quickly and discretely mix cocktails with voice commands. Meant as a little fun party bot to show off to friends and family.
 
 ### How it works
